@@ -1,0 +1,49 @@
+import pandas as pd
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split
+from sklearn import metrics
+from sklearn import preprocessing
+
+pd.set_option('display.max_rows', 700) # displaying rows s you re required
+pd.set_option('display.max_columns', 15) # displaying columns as you are required
+pd.set_option('display.width', 1000) # assign width for output
+
+col_names =  ['Loan_ID','Gender','Married','Dependents','Education','Self_Employed','ApplicantIncome','CoapplicantIncome','LoanAmount','Loan_Amount_Term'
+    ,'Credit_History','Property_Area','Loan_Status']
+
+loan_dataset = pd .read_csv(r'E:\BUIC FILES\2nd sem\ML\traindata.csv') # reading csv file from the given path
+print('length of data = ',len(loan_dataset)) # show length or instances in data
+print('shape of the data',loan_dataset.shape) # show instances and columns of data
+loan_encoder = preprocessing.LabelEncoder()
+loan_dataset['Loan_ID'] = loan_encoder.fit_transform(loan_dataset['Loan_ID'])
+loan_dataset['Gender'] = loan_encoder.fit_transform(loan_dataset['Gender'])
+loan_dataset['Married'] = loan_encoder.fit_transform(loan_dataset['Married'])
+loan_dataset['Education'] = loan_encoder.fit_transform(loan_dataset['Education'])
+loan_dataset['Self_Employed'] = loan_encoder.fit_transform(loan_dataset['Self_Employed'])
+loan_dataset['Property_Area'] = loan_encoder.fit_transform(loan_dataset['Property_Area'])
+loan_dataset['Loan_Status'] = loan_encoder.fit_transform(loan_dataset['Loan_Status'])
+#print(loan_dataset)
+# below divide data in to features and target variables in my case the target variables is ('Y','N')
+
+feature_cols = ['Loan_ID','Gender','Married','Dependents','Education','Self_Employed','ApplicantIncome','CoapplicantIncome','LoanAmount','Loan_Amount_Term','Credit_History','Property_Area']
+X = loan_dataset[feature_cols]
+y = loan_dataset.Loan_Status
+
+X_train,X_test,y_train,y_test = train_test_split(X, y, test_size=0.3,random_state=100)
+
+clf = DecisionTreeClassifier()
+clf = clf.fit(X_train,y_train)
+
+y_pred = clf.predict(X_test)
+
+print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
+
+clf = DecisionTreeClassifier(criterion='entropy',max_depth=4)
+clf = clf.fit(X_train,y_train)
+y_pred = clf.predict(X_test)
+print('Accuracy = ', metrics.accuracy_score(y_test,y_pred))
+
+clf = DecisionTreeClassifier(criterion='gini',max_depth=4)
+cld = clf.fit(X_train,y_train)
+y_pred = clf.predict(X_test)
+print('Accuracy = ', metrics.accuracy_score(y_test,y_pred))
